@@ -1,0 +1,39 @@
+{% extends "base_template.html" %}
+{% block title %}Top downloads{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Top 5 most downloaded datasets</h1>
+
+<div class="col-12">
+  <div class="card">
+    <div class="card-body">
+      {% if datasets %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Downloads</th>
+            <th>Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in datasets %}
+          <tr>
+            <td>{{ d.title }}</td>
+            <td>{{ d.downloads }}</td>
+            <td>
+              <a href="{{ url_for('dataset.download_dataset', dataset_id=d.dataset_id) }}">
+                <i data-feather="download"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="alert alert-info mb-0">No downloaded datasets yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

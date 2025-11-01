@@ -140,6 +140,9 @@ class DataSetService(BaseService):
         domain = os.getenv("DOMAIN", "localhost")
         return f"http://{domain}/doi/{dataset.ds_meta_data.dataset_doi}"
 
+    def get_top_downloads_global(self, limit: int = 10):
+        return self.repository.get_top_downloads_global(limit=limit)
+
 
 class AuthorService(BaseService):
     def __init__(self):

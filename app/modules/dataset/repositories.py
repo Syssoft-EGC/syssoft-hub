@@ -99,6 +99,22 @@ class DataSetRepository(BaseRepository):
             .all()
         )
 
+    def get_top_downloads_global(self, limit: int = 10):
+        return (
+            self.model.query
+            .join(DSMetaData, DSMetaData.id == DataSet.ds_meta_data_id)
+            .outerjoin(DSDownloadRecord, DSDownloadRecord.dataset_id == DataSet.id)  # global, incluye 0
+            .with_entities(
+                DataSet.id.label("dataset_id"),
+                DSMetaData.title.label("title"),
+                func.coalesce(func.count(DSDownloadRecord.id), 0).label("downloads"),
+            )
+            .group_by(DataSet.id, DSMetaData.title)
+            .order_by(desc("downloads"))
+            .limit(limit)
+            .all()
+        )
+
 
 class DOIMappingRepository(BaseRepository):
     def __init__(self):
