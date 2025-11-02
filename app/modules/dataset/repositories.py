@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from flask_login import current_user
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, and_
 
 from app.modules.dataset.models import Author, DataSet, DOIMapping, DSDownloadRecord, DSMetaData, DSViewRecord
 from core.repositories.BaseRepository import BaseRepository
@@ -99,44 +99,63 @@ class DataSetRepository(BaseRepository):
             .all()
         )
 
-    def get_top_downloads_global(self, limit=10, days=30):
-        since_date = datetime.utcnow() - timedelta(days=days)
-        return (
+    def get_top_downloads_global(self, limit: int = 10, days: int = 30):
+        """
+        Top global por descargas en los últimos 'days' días.
+        Incluye datasets con 0 descargas en el rango (outer join).
+        """
+        since = datetime.now(timezone.utc) - timedelta(days=days)
+
+        q = (
             self.model.query
             .join(DSMetaData, DSMetaData.id == DataSet.ds_meta_data_id)
-            .outerjoin(DSDownloadRecord, DSDownloadRecord
-                    .dataset_id == DataSet.id)
+            .outerjoin(
+                DSDownloadRecord,
+                and_(
+                    DSDownloadRecord.dataset_id == DataSet.id,
+                    DSDownloadRecord.download_date >= since,
+                ),
+            )
             .with_entities(
                 DataSet.id.label("dataset_id"),
                 DSMetaData.title.label("title"),
                 DSMetaData.dataset_doi.label("doi"),
                 func.coalesce(func.count(DSDownloadRecord.id), 0).label("downloads"),
             )
-            .filter(DSDownloadRecord.download_date >= since_date)
             .group_by(DataSet.id, DSMetaData.title, DSMetaData.dataset_doi)
             .order_by(desc("downloads"))
             .limit(limit)
-            .all()
         )
+        return q.all()
 
-    def get_top_views_global(self, limit=10, days=30):
-        since_date = datetime.utcnow() - timedelta(days=days)
-        return (
+    def get_top_views_global(self, limit: int = 10, days: int = 30):
+        """
+        Top global por vistas en los últimos 'days' días.
+        Incluye datasets con 0 vistas en el rango (outer join).
+        """
+        since = datetime.now(timezone.utc) - timedelta(days=days)
+
+        q = (
             self.model.query
             .join(DSMetaData, DSMetaData.id == DataSet.ds_meta_data_id)
-            .outerjoin(DSViewRecord, DSViewRecord.dataset_id == DataSet.id)
+            .outerjoin(
+                DSViewRecord,
+                and_(
+                    DSViewRecord.dataset_id == DataSet.id,
+                    DSViewRecord.view_date >= since,
+                ),
+            )
             .with_entities(
                 DataSet.id.label("dataset_id"),
                 DSMetaData.title.label("title"),
                 DSMetaData.dataset_doi.label("doi"),
                 func.coalesce(func.count(DSViewRecord.id), 0).label("views"),
             )
-            .filter(DSViewRecord.view_date >= since_date)
             .group_by(DataSet.id, DSMetaData.title, DSMetaData.dataset_doi)
             .order_by(desc("views"))
             .limit(limit)
-            .all()
         )
+        return q.all()
 
 
 class DOIMappingRepository(BaseRepository):
