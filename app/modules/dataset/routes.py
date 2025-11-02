@@ -272,8 +272,14 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-@dataset_bp.route("/datasets/top-downloads", methods=["GET"])
+@dataset_bp.route("/datasets/top", methods=["GET"])
 @login_required
-def view_top_downloads_global():
-    datasets = dataset_service.get_top_downloads_global(limit=10)  # Top 10 global
-    return render_template("dataset/top_datasets.html", datasets=datasets)
+def view_top_global():
+    metric = request.args.get("metric", "downloads")  # 'downloads' o 'views'
+    limit = request.args.get("limit", 10, type=int)
+
+    datasets = dataset_service.get_top_global(metric=metric, limit=limit)
+
+    return render_template("dataset/top_global.html",
+                           datasets=datasets,
+                           metric=metric)

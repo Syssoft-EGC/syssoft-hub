@@ -140,7 +140,10 @@ class DataSetService(BaseService):
         domain = os.getenv("DOMAIN", "localhost")
         return f"http://{domain}/doi/{dataset.ds_meta_data.dataset_doi}"
 
-    def get_top_downloads_global(self, limit: int = 10):
+    def get_top_global(self, metric: str = "downloads", limit: int = 10):
+        """Devuelve el top global según la métrica elegida."""
+        if metric == "views":
+            return self.repository.get_top_views_global(limit=limit)
         return self.repository.get_top_downloads_global(limit=limit)
 
 

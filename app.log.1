@@ -1,4 +1,4 @@
-2025-11-01 20:55:55,420 - app - ERROR - Exception on /datasets/top-datasets [GET]
+2025-11-01 21:02:11,391 - app - ERROR - Exception on /datasets/top-datasets [GET]
 Traceback (most recent call last):
   File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
     response = self.full_dispatch_request()
@@ -41,9 +41,9 @@ Traceback (most recent call last):
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/flask/templating.py", line 99, in _get_source_fast
     raise TemplateNotFound(template)
-jinja2.exceptions.TemplateNotFound: top_datasets.html
-2025-11-01 20:55:55,424 - app - ERROR - Internal Server Error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
-2025-11-01 21:00:50,526 - app - ERROR - Exception on /datasets/top-datasets [GET]
+jinja2.exceptions.TemplateNotFound: templates/dataset/top_datasets.html
+2025-11-01 21:02:11,393 - app - ERROR - Internal Server Error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+2025-11-02 01:08:59,587 - app - ERROR - Exception on /datasets/top [GET]
 Traceback (most recent call last):
   File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
     response = self.full_dispatch_request()
@@ -63,9 +63,9 @@ Traceback (most recent call last):
   File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/flask_login/utils.py", line 290, in decorated_view
     return current_app.ensure_sync(func)(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/app/modules/dataset/routes.py", line 279, in view_top_datasets
-    return render_template(
-           ^^^^^^^^^^^^^^^^
+  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/app/modules/dataset/routes.py", line 283, in view_top_global
+    return render_template("dataset/top_global.html",
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/flask/templating.py", line 149, in render_template
     template = app.jinja_env.get_or_select_template(template_name_or_list)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -78,13 +78,14 @@ Traceback (most recent call last):
   File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 975, in _load_template
     template = self.loader.load(self, name, self.make_globals(globals))
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/jinja2/loaders.py", line 126, in load
-    source, filename, uptodate = self.get_source(environment, name)
-                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/flask/templating.py", line 65, in get_source
-    return self._get_source_fast(environment, template)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/flask/templating.py", line 99, in _get_source_fast
-    raise TemplateNotFound(template)
-jinja2.exceptions.TemplateNotFound: app/modules/dataset/templates/dataset/top_datasets.html
-2025-11-01 21:00:50,530 - app - ERROR - Internal Server Error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/juan-antonio/Escritorio/PROYECTO/syssoft-hub/app/modules/dataset/templates/dataset/top_global.html", line 56, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'endblock'.
+2025-11-02 01:08:59,592 - app - ERROR - Internal Server Error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.

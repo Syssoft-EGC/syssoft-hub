@@ -99,18 +99,38 @@ class DataSetRepository(BaseRepository):
             .all()
         )
 
-    def get_top_downloads_global(self, limit: int = 10):
+    def get_top_downloads_global(self, limit=10):
         return (
             self.model.query
             .join(DSMetaData, DSMetaData.id == DataSet.ds_meta_data_id)
-            .outerjoin(DSDownloadRecord, DSDownloadRecord.dataset_id == DataSet.id)  # global, incluye 0
+            .outerjoin(DSDownloadRecord,
+                       DSDownloadRecord.dataset_id == DataSet.id)
             .with_entities(
                 DataSet.id.label("dataset_id"),
                 DSMetaData.title.label("title"),
-                func.coalesce(func.count(DSDownloadRecord.id), 0).label("downloads"),
+                DSMetaData.dataset_doi.label("doi"),
+                func.coalesce(func.count(DSDownloadRecord.id), 0)
+                .label("downloads"),
             )
-            .group_by(DataSet.id, DSMetaData.title)
+            .group_by(DataSet.id, DSMetaData.title, DSMetaData.dataset_doi)
             .order_by(desc("downloads"))
+            .limit(limit)
+            .all()
+        )
+
+    def get_top_views_global(self, limit=10):
+        return (
+            self.model.query
+            .join(DSMetaData, DSMetaData.id == DataSet.ds_meta_data_id)
+            .outerjoin(DSViewRecord, DSViewRecord.dataset_id == DataSet.id)
+            .with_entities(
+                DataSet.id.label("dataset_id"),
+                DSMetaData.title.label("title"),
+                DSMetaData.dataset_doi.label("doi"),
+                func.coalesce(func.count(DSViewRecord.id), 0).label("views"),
+            )
+            .group_by(DataSet.id, DSMetaData.title, DSMetaData.dataset_doi)
+            .order_by(desc("views"))
             .limit(limit)
             .all()
         )

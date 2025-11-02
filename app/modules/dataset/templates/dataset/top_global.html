@@ -1,0 +1,61 @@
+{% extends "base_template.html" %}
+{% block title %}Top Datasets{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">
+  Top {{ 'most viewed' if metric == 'views' else 'most downloaded' }} datasets
+</h1>
+
+<div class="mb-3">
+  {% if metric == 'downloads' %}
+    <a href="{{ url_for('dataset.view_top_global', metric='views') }}" class="btn btn-outline-primary">
+      Show most viewed
+    </a>
+  {% else %}
+    <a href="{{ url_for('dataset.view_top_global', metric='downloads') }}" class="btn btn-outline-primary">
+      Show most downloaded
+    </a>
+  {% endif %}
+</div>
+
+<div class="col-12">
+  <div class="card">
+    <div class="card-body">
+      {% if datasets %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>{{ 'Views' if metric == 'views' else 'Downloads' }}</th>
+            <th>Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in datasets %}
+          <tr>
+            <td>{{ d.title }}</td>
+            <td>{{ d.views if metric == 'views' else d.downloads }}</td>
+            <td>
+              {% if metric == 'views' %}
+                <!-- Ver por DOI -->
+                <a href="{{ url_for('dataset.subdomain_index', doi=d.doi) }}" title="View">
+                  <i data-feather="eye"></i>
+                </a>
+              {% elif metric == 'downloads' %}
+                <!-- Descargar por ID -->
+                <a href="{{ url_for('dataset.download_dataset', dataset_id=d.dataset_id) }}" title="Download">
+                  <i data-feather="download"></i>
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="alert alert-info mb-0">No datasets found.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
