@@ -6,16 +6,32 @@
   Top {{ 'most viewed' if metric == 'views' else 'most downloaded' }} datasets
 </h1>
 
-<div class="mb-3">
-  {% if metric == 'downloads' %}
-    <a href="{{ url_for('dataset.view_top_global', metric='views') }}" class="btn btn-outline-primary">
-      Show most viewed
+<div class="mb-3 d-flex gap-2">
+
+  {# Grupo de botones para alternar métrica #}
+  <div class="btn-group" role="group" aria-label="Metric selector">
+    <a href="{{ url_for('dataset.view_top_global', metric='downloads', days=days) }}"
+       class="btn btn-outline-primary {% if metric == 'downloads' %}active{% endif %}">
+       Most downloaded
     </a>
-  {% else %}
-    <a href="{{ url_for('dataset.view_top_global', metric='downloads') }}" class="btn btn-outline-primary">
-      Show most downloaded
+    <a href="{{ url_for('dataset.view_top_global', metric='views', days=days) }}"
+       class="btn btn-outline-primary {% if metric == 'views' %}active{% endif %}">
+       Most viewed
     </a>
-  {% endif %}
+  </div>
+
+  {# Grupo de botones para rango temporal #}
+  <div class="btn-group ms-2" role="group" aria-label="Days range">
+    <a href="{{ url_for('dataset.view_top_global', metric=metric, days=7) }}"
+       class="btn btn-outline-secondary {% if days == 7 %}active{% endif %}">
+       Last 7 days
+    </a>
+    <a href="{{ url_for('dataset.view_top_global', metric=metric, days=30) }}"
+       class="btn btn-outline-secondary {% if days == 30 %}active{% endif %}">
+       Last 30 days
+    </a>
+  </div>
+
 </div>
 
 <div class="col-12">
@@ -37,12 +53,10 @@
             <td>{{ d.views if metric == 'views' else d.downloads }}</td>
             <td>
               {% if metric == 'views' %}
-                <!-- Ver por DOI -->
                 <a href="{{ url_for('dataset.subdomain_index', doi=d.doi) }}" title="View">
                   <i data-feather="eye"></i>
                 </a>
               {% elif metric == 'downloads' %}
-                <!-- Descargar por ID -->
                 <a href="{{ url_for('dataset.download_dataset', dataset_id=d.dataset_id) }}" title="Download">
                   <i data-feather="download"></i>
                 </a>

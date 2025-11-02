@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from flask_login import current_user
@@ -99,26 +99,28 @@ class DataSetRepository(BaseRepository):
             .all()
         )
 
-    def get_top_downloads_global(self, limit=10):
+    def get_top_downloads_global(self, limit=10, days=30):
+        since_date = datetime.utcnow() - timedelta(days=days)
         return (
             self.model.query
             .join(DSMetaData, DSMetaData.id == DataSet.ds_meta_data_id)
-            .outerjoin(DSDownloadRecord,
-                       DSDownloadRecord.dataset_id == DataSet.id)
+            .outerjoin(DSDownloadRecord, DSDownloadRecord
+                    .dataset_id == DataSet.id)
             .with_entities(
                 DataSet.id.label("dataset_id"),
                 DSMetaData.title.label("title"),
                 DSMetaData.dataset_doi.label("doi"),
-                func.coalesce(func.count(DSDownloadRecord.id), 0)
-                .label("downloads"),
+                func.coalesce(func.count(DSDownloadRecord.id), 0).label("downloads"),
             )
+            .filter(DSDownloadRecord.download_date >= since_date)
             .group_by(DataSet.id, DSMetaData.title, DSMetaData.dataset_doi)
             .order_by(desc("downloads"))
             .limit(limit)
             .all()
         )
 
-    def get_top_views_global(self, limit=10):
+    def get_top_views_global(self, limit=10, days=30):
+        since_date = datetime.utcnow() - timedelta(days=days)
         return (
             self.model.query
             .join(DSMetaData, DSMetaData.id == DataSet.ds_meta_data_id)
@@ -129,6 +131,7 @@ class DataSetRepository(BaseRepository):
                 DSMetaData.dataset_doi.label("doi"),
                 func.coalesce(func.count(DSViewRecord.id), 0).label("views"),
             )
+            .filter(DSViewRecord.view_date >= since_date)
             .group_by(DataSet.id, DSMetaData.title, DSMetaData.dataset_doi)
             .order_by(desc("views"))
             .limit(limit)

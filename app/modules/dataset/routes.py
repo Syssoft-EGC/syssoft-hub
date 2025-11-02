@@ -273,13 +273,18 @@ def get_unsynchronized_dataset(dataset_id):
 
 
 @dataset_bp.route("/datasets/top", methods=["GET"])
-@login_required
 def view_top_global():
-    metric = request.args.get("metric", "downloads")  # 'downloads' o 'views'
+    metric = request.args.get("metric", "downloads")
     limit = request.args.get("limit", 10, type=int)
+    days = request.args.get("days", 30, type=int)
 
-    datasets = dataset_service.get_top_global(metric=metric, limit=limit)
+    datasets = dataset_service.get_top_global(metric=metric, limit=limit,
+                                              days=days)
 
-    return render_template("dataset/top_global.html",
-                           datasets=datasets,
-                           metric=metric)
+    return render_template(
+        "dataset/top_global.html",
+        datasets=datasets,
+        metric=metric,
+        limit=limit,
+        days=days
+    )
